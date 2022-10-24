@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>[ĐĂNG KÝ] Tạo tài khoản chủ sân</title>
+  <link rel="stylesheet" type="text/css" href="/css/registerPitch.css">
+  <link rel="shortcut icon" href="/img/logo.jpg">
+  <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.17.0/dist/jquery.validate.min.js"></script>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+
+<body style="background-image: url(/img/yardBackground.jpg) ; object-fit: cover;">
+<form id="myForm" th:action="@{/registerPitch}" enctype="multipart/form-data" method="post">
+  <!-- One "tab" for each step in the form: -->
+  <div class="tab pt-3">
+    <h2>Thông tin cá nhân</h2>
+    <hr class="mx-3 mb-5">
+    <div class="row my-4">
+      <div class="col-8 col-sm-8 col-md-8 col-lg-3 offset-sm-2 offset-md-2 offset-lg-1 my-0 d-flex">
+        <label class="form-label mt-1">Họ và tên<span class="text-danger"> *</span></label>
+      </div>
+      <div class="col-8 col-sm-8 col-md-8 col-lg-7 offset-sm-2 offset-md-2 offset-lg-0">
+        <input class="form-control"
+               id="name"
+               placeholder="Nhập tên đầy đủ" name="name" pattern="[a-zA-Z]*"
+               >
+      </div>
+    </div>
+    <div class="row my-4">
+      <div class="col-8 col-sm-8 col-md-8 col-lg-3 offset-sm-2 offset-md-2 offset-lg-1 my-0 d-flex">
+        <label class="form-label mt-1">E-mail<span class="text-danger"> *</span></label>
+      </div>
+      <div class="col-8 col-sm-8 col-md-8 col-lg-7 offset-sm-2 offset-md-2 offset-lg-0">
+        <input class="form-control"
+               placeholder="Nhập E-mail"
+               name="mail"
+               >
+      </div>
+    </div>
+    <div class="row my-4">
+      <div class="col-8 col-sm-8 col-md-8 col-lg-3 offset-sm-2 offset-md-2 offset-lg-1 my-0 d-flex">
+        <label class="form-label mt-1">Số
+          điện thoại<span class="text-danger"> *</span></label>
+      </div>
+      <div class="col-8 col-sm-8 col-md-8 col-lg-7 offset-sm-2 offset-md-2 offset-lg-0">
+        <input class="form-control"
+               placeholder="Nhập số điện thoại"
+               name="phone" maxlength="10"
+               >
+      </div>
+    </div>
+    <div class="row my-4">
+      <div class="col-8 col-sm-8 col-md-8 col-lg-3 offset-sm-2 offset-md-2 offset-lg-1 my-0 d-flex">
+        <label class="form-label mt-1">Ngân
+          hàng<span class="text-danger"> *</span></label>
+      </div>
+      <div class="col-8 col-sm-8 col-md-8 col-lg-7 offset-sm-2 offset-md-2 offset-lg-0">
+        <select class="form-control cursor-pointer"
+                name="bank">
+          <option value="" disabled selected>Chọn ngân hàng</option>
+          <option value="TPBank"> TPBank</option>
+          <option value="BIDV"> BIDV</option>
+          <option value="Agribank"> Agribank</option>
+          <option value="Techcombank"> Techcombank</option>
+          <option value="VPBank"> VPBank</option>
+        </select>
+      </div>
+    </div>
+    <div class="row my-4">
+      <div class="col-8 col-sm-8 col-md-8 col-lg-3 offset-sm-2 offset-md-2 offset-lg-1 my-0 d-flex">
+        <label class="form-label mt-1">Số
+          tài khoản<span class="text-danger"> *</span></label>
+      </div>
+      <div class="col-8 col-sm-8 col-md-8 col-lg-7 offset-sm-2 offset-md-2 offset-lg-0">
+        <input class="form-control"
+               placeholder="Nhập số tài khoản"
+               name="stkbank"
+               >
+      </div>
+    </div>
+    <div class="row my-4">
+      <div class="col-8 col-sm-8 col-md-8 col-lg-3 offset-sm-2 offset-md-2 offset-lg-1 my-0 d-flex">
+        <label class="form-label mt-1">Tên
+          sân bóng<span class="text-danger"> *</span></label>
+      </div>
+      <div class="col-8 col-sm-8 col-md-8 col-lg-7 offset-sm-2 offset-md-2 offset-lg-0">
+        <input class="form-control"
+               placeholder="Nhập tên sân bóng"
+               name="namePitch"
+               >
+      </div>
+    </div>
+  </div>
+  <div class="tab pt-3 pb-5">
+    <h2>Địa chỉ sân</h2>
+    <hr class="mx-3 mb-5">
+    <div class="row my-4">
+      <div class="col-8 col-sm-8 col-md-8 col-lg-3 offset-sm-2 offset-md-2 offset-lg-1 my-0 d-flex">
+        <label class="form-label mt-1">Quận/huyện<span class="text-danger"> *</span></label>
+      </div>
+      <div class="col-8 col-sm-8 col-md-8 col-lg-7 offset-sm-2 offset-md-2 offset-lg-0">
+        <select class="form-control cursor-pointer"
+                name="district">
+          <option th:each="district : ${districtList}" th:value="${district.id}" th:text="${district.name}">
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="row my-4">
+      <div class="col-8 col-sm-8 col-md-8 col-lg-3 offset-sm-2 offset-md-2 offset-lg-1 my-0 d-flex">
+        <label class="form-label mt-1">Địa
+          chỉ sân<span class="text-danger"> *</span></label>
+      </div>
+      <div class="col-8 col-sm-8 col-md-8 col-lg-7 offset-sm-2 offset-md-2 offset-lg-0">
+        <input class="form-control"
+               placeholder="Nhập địa chỉ sân" name="address"
+               >
+      </div>
+    </div>
+  </div>
+  <div class="tab pt-3">
+    <h2>Mô tả</h2>
+    <hr class="mx-3 mb-5">
+    <div class="row my-4">
+      <div class="col-8 col-sm-8 col-md-8 col-lg-3 offset-sm-2 offset-md-2 offset-lg-1 my-0 d-flex">
+        <label class="form-label mt-2">Ảnh 1<span class="text-danger"> *</span></label>
+      </div>
+      <div class="col-8 col-sm-8 col-md-8 col-lg-7 offset-sm-2 offset-md-2 offset-lg-0 d-flex flex-column">
+        <input class="form-control border-0 outline-none"
+               type="file"
+               name="pic1" id="file1" accept="image/*" onchange="previewImage(event, 'preview1')">
+        <div class="preview">
+          <img id="preview1" class="rounded w-50">
+        </div>
+      </div>
+    </div>
+
+    <div class="row my-4">
+      <div class="col-8 col-sm-8 col-md-8 col-lg-3 offset-sm-2 offset-md-2 offset-lg-1 my-0 d-flex">
+        <label class="form-label mt-2">Ảnh 2<span class="text-danger"> *</span></label>
+      </div>
+      <div class="col-8 col-sm-8 col-md-8 col-lg-7 offset-sm-2 offset-md-2 offset-lg-0 d-flex flex-column">
+        <input class="form-control border-0 outline-none"
+               type="file"
+               name="pic2" id="file2" accept="image/*" onchange="previewImage(event, 'preview2')">
+        <div class="preview">
+          <img id="preview2" class="rounded w-50">
+        </div>
+      </div>
+    </div>
+
+    <div class="row my-4">
+      <div class="col-8 col-sm-8 col-md-8 col-lg-3 offset-sm-2 offset-md-2 offset-lg-1 my-0 d-flex">
+        <label class="form-label mt-2">Ảnh 3<span class="text-danger"> *</span></label>
+      </div>
+      <div class="col-8 col-sm-8 col-md-8 col-lg-7 offset-sm-2 offset-md-2 offset-lg-0 d-flex flex-column">
+        <input class="form-control border-0 outline-none"
+               type="file"
+               name="pic3" id="file3" accept="image/*" onchange="previewImage(event, 'preview3')">
+        <div class="preview">
+          <img id="preview3" class="rounded w-50">
+        </div>
+      </div>
+    </div>
+
+    <div class="row my-4">
+      <div class="col-8 col-sm-8 col-md-8 col-lg-3 offset-sm-2 offset-md-2 offset-lg-1 form-label">
+        <label class="mt-1">Dịch vụ</label>
+      </div>
+      <textarea class="col-8 col-sm-8 col-md-8 col-lg-7 offset-sm-2 offset-md-2 offset-lg-0 form-control"
+                name="service"></textarea>
+    </div>
+  </div>
+  <div style="overflow:auto;">
+    <div class="mt-5">
+      <button type="button" class="previous btn px-5">Quay lại</button>
+      <button type="button" class="next btn px-5">Tiếp theo</button>
+      <button type="button" class="submit btn px-5">Xác nhận</button>
+    </div>
+  </div>
+  <!-- Circles which indicates the steps of the form: -->
+  <div class="text-center mt-2 d-flex justify-content-center">
+    <span class="step"></span>
+    <span class="step"></span>
+    <span class="step"></span>
+  </div>
+</form>
+<script src="/js/scripts.js"></script>
+<script type="text/javascript" src="/js/registerPitch.js"></script>
+
+</body>
+
+</html>

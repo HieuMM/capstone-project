@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="shortcut icon" href="img/logo.jpg">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>[QUẢN LÝ] Quản lý thông tin sân</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
+    <!-- https://fonts.google.com/specimen/Roboto -->
+    <link rel="stylesheet" href="/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/priceYard.css">
+    <style>
+        .navbar-nav .nav-item:hover {
+            background-color: rgba(180, 190, 203, 0.4);
+        }
+    </style>
+</head>
+
+<body id="reportsPage">
+<div style="background-color: #ecf0f1">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-4">
+        <div class="container">
+            <a class="navbar-brand" th:href="|/load-manager-own|">Trang quản lý cho chủ sân</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-md-auto gap-2">
+                    <li class="nav-item rounded">
+                        <a class="nav-link " aria-current="page" th:href="|/load-manager-own|"><i
+                                class="	fas fa-tachometer-alt me-2"></i>Tổng quan</a>
+                    </li>
+                    <li class="nav-item rounded">
+                        <a class="nav-link active" th:href="|/loadyardmanagerown|"><i class="	fas fa-table me-2"></i>Quản
+                            lý sân</a>
+                    </li>
+                    <li class="nav-item dropdown rounded">
+                        <a class="nav-link " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            <i class="	fas fa-user-circle me-2 my-auto"></i><span
+                                th:text="${user.getUsername()}"></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-md-start" aria-labelledby="navbarDropdown">
+                            <li>
+                                <a class="dropdown-item" th:href="@{/logout}"><i class='fas fa-sign-out-alt'></i>Đăng
+                                    xuất</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container py-2" style="height: 80vh">
+        <div class="row bg-white border-0 rounded py-5 px-3 mt-5" style="height: 76vh; overflow: hidden">
+            <div class="left-container col-12 col-md-8 px-4" style="min-height: 27.3vw">
+                <div>
+                    <h4 class="float-left text-uppercase">Danh sách sân</h4>
+                    <a class="btn btn-dark btn-sm text-uppercase mb-3 float-right text-white" onclick="showAddYard()"><i
+                            class='far fa-plus-square mr-2'></i>Thêm sân</a>
+                </div>
+                <div id="add-yard-container">
+                    <div id="form-add-yard" class="border rounded p-0 ">
+                        <form th:action="@{/addyard}" method="post" class="row" style="width: 95%">
+                            <div class="form-group my-2 col-md-5 d-flex justify-content-start py-0">
+                                <label for="name">Tên sân</label>
+                                <input id="name" name="name" type="text" class=" validate" required/>
+                            </div>
+                            <div class="form-group my-2 col-md-5 d-flex justify-content-start py-0">
+                                <label>Miêu tả</label>
+                                <input id="detail" name="detail" class=" validate" required>
+                            </div>
+                            <input hidden name="ownPitch" th:value="${user.getIdOwn()}">
+                            <div class="col-md-2 py-2 d-flex">
+                                <button type="submit" class="btn btn-success text-uppercase small"><i
+                                        class='fas fa-plus-circle'></i>Thêm
+                                </button>
+                                <button type="button" class="btn btn-danger text-uppercase small"
+                                        onclick="closeAddYard()">
+                                    Hủy
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <table id="table-yard" class="table table-hover tm-table-small tm-product-table"
+                       style="max-height: 38em; overflow-y: auto; transition: all .25s ease-in-out">
+                    <thead>
+                    <tr>
+                        <th scope="col" width="5%"></th>
+                        <th scope="col" width="45%">Tên sân</th>
+                        <th scope="col" width="30%">Miêu tả</th>
+                        <th scope="col" width="10%" class="text-center"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:id="|row${yard.getId()}|" th:each="yard : ${yardList}"
+                        th:onclick="|getYard(this, ${yard.getId()})|">
+                        <td>
+                            <input th:id="${yard.getId()}" class="row-rd my-2" type="radio" name="seclectrow">
+                        </td>
+                        <td th:text="${yard.name}"></td>
+                        <td th:text="${yard.detail}"></td>
+                        <td class="text-center">
+                            <a id="btn-delete" th:href="|/deleteYard?id=${yard.getId()}|"
+                               class="btn btn-danger btn-sm px-3"
+                               th:yard-name-data="${yard.name}"
+                               onclick="if ($('#form-add-yard').hasClass('active') ? true : !confirm('Xác nhận xóa sân: '+ this.getAttribute('yard-name-data') + ' ?')) { return false }">
+                                <i class="far fa-trash-alt tm-product-delete-icon"></i>
+                            </a>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+                <!-- table container -->
+            </div>
+            <div id="form-yard-time" class="col-12 col-md-4 px-4 border border-0  border-start"
+                 style="border-color: #acacac">
+                <h5 class="text-uppercase">danh sách khung giờ</h5>
+                <h6 id="listTime-title">Sân: </h6>
+                <div class="tm-product-table-container">
+                    <table class="table tm-table-small tm-product-table mb-5">
+                        <thead>
+                        <tr>
+                            <th scope="col" width="5%">#</th>
+                            <th scope="col" width="35%" class="text-center">Thời lượng sân</th>
+                            <th scope="col" width="35%" class="text-right">Giá (VNĐ)</th>
+                            <th scope="col" width="25%" class="text-center"></th>
+                        </tr>
+                        </thead>
+                        <tbody id="getTimeAndPrice1">
+                        </tbody>
+                    </table>
+                    <a id="btn-add-time" class="btn-add-time btn btn-dark btn-sm text-uppercase active"
+                       onclick="this.classList.remove('active'); $('#form-add-time').addClass('active')"><i
+                            class='far fa-plus-square mr-2'></i>Thêm khung giờ</a>
+                    <div id="form-add-time" class="bg-dark border-0 rounded p-4">
+                        <form th:action="@{/addprice}" method="post" id="price-time-form">
+                            <div class="mb-2 row">
+                                <label class="col-4 my-auto font-weight-bold text-white small">Bắt đầu</label>
+                                <div class="col-8 d-flex justify-content-start start-time-pickup">
+                                    <input id="stime" name="startTime" type="hidden" value="00:00">
+                                    <div class="d-flex flex-column ">
+                                        <div class="form-group d-flex flex-row flex-start m-0">
+                                            <div class="position-relative">
+                                                <input id="sHour" class="form-control text-center "
+                                                       type="text"
+                                                       value="00" readonly>
+                                                <ul id="sh-list" class="bg-light list-time">
+                                                    <li th:each="i: ${#numbers.sequence(0, 23)}"
+                                                        th:text="${i < 10 ? '0'+ i: i}"></li>
+                                                </ul>
+                                            </div>
+                                            <div class="vr"></div>
+                                            <label for="sHour" class="form-label">Giờ</label>
+                                        </div>
+
+                                    </div>
+                                    <div class="d-flex flex-column">
+                                        <div class="form-group d-flex flex-row m-0">
+                                            <div class="vr"></div>
+                                            <div class="position-relative dropdown">
+                                                <input id="sMin" class="form-control text-center" type="text" value="00"
+                                                       readonly>
+                                                <ul id="sm-list" class="list-time bg-light">
+                                                    <li th:each="i: ${#numbers.sequence(0, 59)}"
+                                                        th:text="${i < 10 ? '0'+ i: i}"></li>
+                                                </ul>
+                                            </div>
+                                            <div class="vr"></div>
+                                            <label for="sMin" class="form-label">Phút</label>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-2 row ">
+                                <label class="col-4 my-auto  font-weight-bold text-white small">Kết thúc</label>
+                                <div class="col-8 d-flex justify-content-start start-time-pickup">
+                                    <input id="etime" name="endTime" type="hidden" value="00:00">
+                                    <div class="d-flex flex-column ">
+                                        <div class="form-group d-flex flex-row m-0">
+                                            <div class="position-relative">
+                                                <input id="eHour" class="form-control text-center"
+                                                       type="text"
+                                                       value="00" readonly>
+                                                <ul id="eh-list" class="bg-light list-time">
+                                                    <li th:each="i: ${#numbers.sequence(0, 23)}"
+                                                        th:text="${i < 10 ? '0'+ i: i}"></li>
+                                                </ul>
+                                            </div>
+                                            <div class="vr"></div>
+                                            <label for="eHour" class="form-label">Giờ</label>
+                                        </div>
+
+                                    </div>
+                                    <div class="d-flex flex-column">
+
+                                        <div class="form-group d-flex flex-row m-0">
+                                            <div class="vr"></div>
+                                            <div class="position-relative">
+                                                <input id="eMin" class="form-control text-center" type="text" value="00"
+                                                       readonly>
+                                                <ul id="em-list" class="list-time bg-light">
+                                                    <li th:each="i: ${#numbers.sequence(0, 59)}"
+                                                        th:text="${i < 10 ? '0'+ i: i}"></li>
+                                                </ul>
+                                            </div>
+                                            <div class="vr"></div>
+                                            <label for="eMin" class="form-label">Phút</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row ">
+                                <label class="col-4 my-auto text-white font-weight-bold small">Giá tiền</label>
+                                <div class="col-8 p-0 ">
+                                    <div class="position-relative money-field">
+                                        <input type="text"
+                                               id="money-yard"
+                                               class="form-control validate bg-light text-dark rounded pr-4 "
+                                               maxlength="7"
+                                               oninput="this.value = this.value.replace(/[^0-9]/g, ''); formatMoneyOnInput(this)"
+                                               required/>
+                                        <div class="currency-label pr-3 pl-2 d-flex align-items-center">
+                                            <label class="d-inline m-0 text-dark">₫</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input id="hidden-yard-id" hidden name="yardId"
+                                       th:value="${session.yardSelected == null ? '' : session.yardSelected}">
+                                <!--                                <input id="hidden-yard-id" hidden name="yardSelected">-->
+                                <input hidden name="ownPitch" th:value="${user.getIdOwn()}">
+                                <input id="hidden-price" hidden name="price">
+                                <script>
+                                    function formatMoneyOnInput(e) {
+                                        const reg = /^[0-9]+$/
+                                        if (e.value == 0) {
+                                            e.value = ''
+                                            return;
+                                        }
+                                        if (reg.test(e.value)) {
+                                            let strMoney = e.value;
+                                            let result = '';
+                                            let count = -2;
+                                            for (let i = strMoney.length; i >= 0; --i) {
+                                                ++count;
+                                                if (count == 3) {
+                                                    result = "." + result;
+                                                    count = 0;
+                                                }
+                                                result = (result == undefined || result == 'undefined' || result == '') ? strMoney[i] : strMoney[i] + result;
+                                            }
+                                            e.value = result;
+                                            $('#hidden-price').val(e.value.replaceAll('.', ''))
+                                            console.log($('#hidden-yard-id').val())
+                                        }
+                                    }
+                                </script>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button type="button" onclick="validateTime()"
+                                        class="btn btn-light text-uppercase small py-1 w-25 mx-1 font-weight-bold"
+                                        style="font-size: .7em">Xác nhận
+                                </button>
+                                <button type="button"
+                                        class="btn btn-danger text-uppercase small py-1 w-25 mx-1 font-weight-bold"
+                                        style="font-size: .7em"
+                                        onclick="$('#form-add-time').removeClass('active'); $('#btn-add-time').addClass('active'); resetTimForm()">
+                                    Hủy
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- table container -->
+                <!-- <button th:href="|/loadformaddprice|" class="btn btn-primary btn-block text-uppercase mb-3">
+                   Thêm giá sân
+                 </button>-->
+
+            </div>
+        </div>
+    </div>
+    <footer class="bg-dark mt-5 mb-0">
+        <div class="container py-4 font-weight-light ">
+            <p class="text-center text-light mb-0 px-4 small">
+                FastSoccer &copy; <b>Summer 2022</b> All rights reserved.
+            </p>
+        </div>
+    </footer>
+</div>
+<script src="js/jquery-3.3.1.min.js"></script>
+<!-- https://jquery.com/download/ -->
+<script src="js/bootstrap.min.js"></script>
+<!-- https://getbootstrap.com/ -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+<script src="/js/priceYard.js"></script>
+<script>
+
+    (function () {
+        var yardSelected = $('#hidden-yard-id').val();
+        let rowId = '#row' + yardSelected;
+        if (yardSelected != null && yardSelected != '' && yardSelected != 'undefined' && yardSelected != undefined) {
+            $('#table-yard').find(rowId.toString())[0].click();
+        } else {
+            $('#table-yard tr')[1].click();
+        }
+    }());
+
+    function getYard(element, id) {
+        if ($('#form-add-yard').hasClass('active')) {
+            return;
+        }
+        if (!element.getElementsByTagName("input")[0].checked) {
+            document.querySelectorAll('.row-rd').forEach(e => {
+                e.checked = false
+            })
+            element.getElementsByTagName("input")[0].checked = true;
+            $('#listTime-title').text(`Sân: ${element.getElementsByTagName('td')[1].textContent}`);
+            $('#hidden-yard-id').val(id);
+            $('#form-add-time').removeClass('active');
+            if (!$('#btn-add-time').hasClass('active')) {
+                $('#btn-add-time').addClass('active')
+            }
+            getListTime(id);
+        }
+    }
+
+    var arrTime = [];
+
+    function getListTime(id, name) {
+        resetTimForm();
+        $.ajax('/yard/' + id,   // request url
+            {
+                success: function (data, status, xhr) {// success callback function
+                    $("#getTimeAndPrice1").empty();
+                    data.priceYardList.sort((a, b) => {
+                        return a.startTime.replaceAll(':', '') > b.startTime.replaceAll(':', '')
+                            ? 1 : a.startTime.replaceAll(':', '') < b.startTime.replaceAll(':', '') ? -1 : 0
+                    })
+                    arrTime = [];
+                    data.priceYardList.map((p, index) => {
+                        arrTime.push({
+                            'startTime': p.startTime,
+                            'endTime': p.endTime
+                        })
+                        $("#getTimeAndPrice1").append(`
+                        <tr >
+                            <th class="text-left">${index + 1}</th>
+                            <td class="text-center"> ${p.startTime} - ${p.endTime} </td>
+                            <td class="text-right px-3">${formatMoney(p.price)}</td>
+                            <td class="text-center">
+                                <a href="/deletePrice?id=${p.id}"
+                                class="btn btn-sm text-light btn-danger px-3 py-0 "
+                                onclick="if(!confirm('Xác nhận xóa khung giờ: ${p.startTime} - ${p.endTime} ?')) return false;">
+                                    <i class="far fa-trash-alt small"></i>
+                                </a>
+                            </td>
+                        </tr>
+                                `)
+                    })
+                }
+            });
+        ;
+
+    };
+
+    function formatMoney(value) {
+        value = value.toString();
+        var result = "";
+        var count = 0;
+        for (let i = value.length - 1; i >= 0; --i) {
+            if (count >= 3) {
+                count = 0;
+                result = "." + result;
+            }
+            result = value[i] + result;
+            ++count;
+        }
+        return result;
+    }
+
+    // $(document).ready(function () {
+    //     getListTime()
+    // })
+
+    function getPrice(value) {
+        var money = Math.floor(value / 1000) + 'K';
+        document.getElementById("price").innerText = "Giá: " + money;
+    }
+
+    function validateTime() {
+        let sTime = $('#stime').val().replaceAll(':', '');
+        let eTime = $('#etime').val().replaceAll(':', '');
+        let isValid = true;
+        if (sTime >= eTime) {
+            alert('Giờ không hợp lệ!');
+            return;
+        }
+        // console(arrTime[0].startTime +" | " +arrTime[0].endTime)
+        // if (arrTime[0].startTime != arrTime[0].endTime) {
+        arrTime.forEach(e => {
+            // console.log("cjeck")
+            let hsTime = e.startTime.replaceAll(':', '');
+            let heTime = e.endTime.replaceAll(':', '');
+            if (hsTime == sTime && heTime == eTime) {
+                isValid = false;
+                return;
+            }
+            if (isInrange(sTime, hsTime, eTime)
+                || isInrange(sTime, heTime, eTime)
+                || isInrange(hsTime, sTime, heTime)
+                || isInrange(hsTime, eTime, heTime)
+                || (isInrange(sTime, hsTime, eTime) && isInrange(sTime, heTime, eTime))
+                || (isInrange(hsTime, sTime, heTime) && isInrange(hsTime, eTime, heTime))
+                || sTime >= eTime) {
+                isValid = false;
+            }
+        });
+        if (!isValid) {
+            alert('Giờ không đã tồn tại!');
+        }
+        // }
+        if (isValid && $('#money-yard').val() != '' && $('#money-yard').val() != 'undefined' && $('#money-yard').val() != undefined) {
+            $('#price-time-form').submit();
+        } else if ($('#money-yard').val() == '' || $('#money-yard').val() == 'undefined' || $('#money-yard').val() == undefined) {
+            alert('Vui lòng nhập giá tiền!');
+        }
+    }
+
+    function isInrange(min, val, max) {
+        return (min < val && val < max);
+    }
+
+    function showAddYard() {
+        $('#form-add-yard').hasClass('active') == false ? $('#form-add-yard').addClass('active') : $('#form-add-yard').addClass('');
+        $('#table-yard').hasClass('table-active') == false ? $('#table-yard').addClass('table-active') : $('#table-yard').addClass('');
+        $('#add-yard-container').css('height', '4rem');
+    }
+
+    function closeAddYard() {
+        $('#name').val('');
+        $('#detail').val('');
+        $('#form-add-yard').removeClass('active');
+        $('#table-yard').removeClass('table-active');
+        $('#add-yard-container').css('height', '0');
+    }
+
+    function resetTimForm() {
+        $('#sTime').val('00:00');
+        $('#sHour').val('00');
+        $('#sMin').val('00');
+        $('#eTime').val('00:00');
+        $('#eHour').val('00');
+        $('#eMin').val('00');
+        $('#money-yard').val('');
+
+    }
+</script>
+</body>
+</html>

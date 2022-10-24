@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>[ĐẶT SÂN] Danh sách sân bóng đá</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="/img/logo.jpg" rel="icon">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+          rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="vendor/aos/aos.css" rel="stylesheet">
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link href="vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <!--Bootstrap-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+
+</head>
+
+<body>
+<!-- ======= Header ======= -->
+<header id="header" th:insert="header.html"></header>
+<!-- End Header -->
+
+<!-- ======= Hero Section ======= -->
+<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img class="d-block w-100" style="height: 25rem" src="/img/slidebar.jpg" alt="First slide">
+        </div>
+        <div class="carousel-item">
+            <img class="d-block w-100" style="height: 25rem" src="/img/slidebar2.jpg" alt="Second slide">
+        </div>
+        <div class="carousel-item">
+            <img class="d-block w-100" style="height: 25rem" src="/img/slidebar.jpg" alt="Third slide">
+        </div>
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
+<main id="main">
+    <!-- ======= Services Section ======= -->
+    <section id="services" class="services">
+        <div class="container" data-aos="fade-up">
+            <div class="section-title pb-1 d-flex justify-content-between">
+                <div class="input-group">
+                    <form id="search-form" class="d-flex w-50 pr-5" th:action="@{/loadFindPitch}" method="get">
+                        <input th:value="${history}" type="text" name="textSearch" class="form-control "
+                               placeholder="Tìm theo địa chỉ hoặc tên sân" aria-label="Search"
+                               aria-describedby="search-addon"
+                                    onblur="this.value = this.value.trim()"
+                        />
+                        <button type="submit" onclick="$('#search-form')[0].submit()"
+                                class="btn btn-outline-primary ml-3">Tìm sân<i class='fas fa-search ml-2'></i></button>
+                    </form>
+                </div>
+                <div class="input-group w-25 d-flex align-items-center">
+                    <i id="sort-btn" class='fas fa-sort-amount-up mr-2 toggle-search' style="font-size: 20px"
+                       onclick="$(this).toggleClass('fa-sort-amount-down fa-sort-amount-up'); sortPitch()"></i>
+                    <select id="sort-by" class="form-select" aria-label="Default select example">
+                        <option value="name">Tên</option>
+                        <option value="district">Quận/Huyện</option>
+                    </select>
+                </div>
+            </div>
+            <hr style="border: 0.5px solid lightgray"/>
+            <!-- ======= Pricing Section ======= -->
+            <section id="pricing" class="pricing mb-5">
+                <div class="container" data-aos="fade-up">
+                    <div class="container">
+                        <p style="color: red" th:text="${session.isEmpty}" th:unless="${session == null}">[...]</p>
+                        <div id="listYard" class="row g-4" style="max-height: 50em; overflow-y: auto">
+                            <div class="yard-container col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-sm-3 mb-lg-3"
+                                 th:each="ownPitchListOk : ${#lists.sort(searchListOwnPitch, pitchName)}">
+                                <div class="card" style="width: 18rem;">
+                                    <img class="card-img-top" style="height: 10rem; object-fit: cover"
+                                         th:src="|@{upload/}${ownPitchListOk.img1}|" alt="Card image cap">
+                                    <div class="card-body">
+                                        <h5 class="card-title yardName" th:text="${ownPitchListOk.getNamePitch()}"></h5>
+                                        <p id="district-name" class="card-text " th:text="${ownPitchListOk.district.name}"></p>
+                                        <a th:href="|/showDetail?id=${ownPitchListOk.id}|"
+                                           class="btn btn-secondary btn-lg btn-block btn-custom"
+                                           style="background:#ffc107"><span>Xem sân</span><i
+                                                class="fa fa-angle-double-right pl-2"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section><!-- End Pricing Section -->
+
+            <!-- ======= Contact Section ======= -->
+            <!-- End Contact Section -->
+        </div>
+    </section>
+</main><!-- End #main -->
+<footer id="footer" th:insert="footer.html"></footer>
+<!-- End Footer -->
+
+<div id="preloader"></div>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<!-- Vendor JS Files -->
+<script src="vendor/purecounter/purecounter.js"></script>
+<script src="vendor/aos/aos.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="vendor/glightbox/js/glightbox.min.js"></script>
+<script src="vendor/isotope-layout/isotope.pkgd.min.js"></script>
+<script src="vendor/swiper/swiper-bundle.min.js"></script>
+<script src="vendor/waypoints/noframework.waypoints.js"></script>
+<script src="vendor/php-email-form/validate.js"></script>
+
+<!-- Template Main JS File -->
+<script src="/js/main.js"></script>
+
+
+<!-- Javascript -->
+<script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/js/jquery-migrate-3.0.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+<script src="/js/jquery.backstretch.min.js"></script>
+<script src="/js/wow.min.js"></script>
+<script src="/js/jquery.waypoints.min.js"></script>
+<script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="/js/findPitch.js"></script>
+<script src="/js/scripts.js"></script>
+
+</body>
+</html>
